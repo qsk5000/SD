@@ -1,106 +1,82 @@
-const CACHE_NAME = ‘mizan-v1’;
+const CACHE_NAME = 'mizan-v1';
 const STATIC_ASSETS = [
-‘/’,
-‘/index.html’,
-‘/manifest.json’,
-‘/css/style.css’,
-‘/js/script.js’,
-‘/icons/icon-192x192.png’,
-‘/icons/icon-512x512.png’
+  '/',
+  '/index.html',
+  '/manifest.json'
 ];
 
-// Install event
-self.addEventListener(‘install’, event => {
-event.waitUntil(
-caches.open(CACHE_NAME)
-.then(cache => {
-console.log(‘Cache opened, caching static assets’);
-return cache.addAll(STATIC_ASSETS)
-.catch(err => {
-console.warn(‘Failed to cache some assets:’, err);
-// Don’t fail the install if some assets fail
-return Promise.resolve();
-});
-})
-.then(() => self.skipWaiting())
-);
+// Install event - cache essentials
+self.addEventListener('install', event => {
+  console.log('🔧 Installing Service Worker...');
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache => {
+        console.log('📦 Caching static assets');
+        return cache.addAll(STATIC_ASSETS);
+      })
+      .then(() => {
+        console.log('✅ Installation complete');
+        return self.skipWaiting();
+      })
+  );
 });
 
-// Activate event
-self.addEventListener(‘activate’, event => {
-event.waitUntil(
-caches.keys()
-.then(cacheNames => {
-return Promise.all(
-cacheNames.map(cacheName => {
-if (cacheName !== CACHE_NAME) {
-console.log(‘Deleting old cache:’, cacheName);
-return caches.delete(cacheName);
-}
-})
-);
-})
-.then(() => self.clients.claim())
-);
+// Activate event - clean old caches
+self.addEventListener('activate', event => {
+  console.log('🚀 Activating Service Worker...');
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          if (cacheName !== CACHE_NAME) {
+            console.log('🗑️ Removing old cache:', cacheName);
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    }).then(() => {
+      return self.clients.claim();
+    })
+  );
 });
 
 // Fetch event - Network first, fallback to cache
-self.addEventListener(‘fetch’, event => {
-// Skip non-GET requests
-if (event.request.method !== ‘GET’) {
-return;
-}
+self.addEventListener('fetch', event => {
+  if (event.request.method !== 'GET' || event.request.url.includes('chrome-extension://')) {
+    return;
+  }
 
-event.respondWith(
-fetch(event.request)
-.then(response => {
-// Clone the response
-const responseClone = response.clone();
-
-```
-    // Cache successful responses
-    if (response.status === 200) {
-      caches.open(CACHE_NAME)
-        .then(cache => {
-          cache.put(event.request, responseClone);
-        })
-        .catch(err => console.warn('Cache update failed:', err));
-    }
-    
-    return response;
-  })
-  .catch(() => {
-    // Network request failed, try cache
-    return caches.match(event.request)
-      .then(cachedResponse => {
-        if (cachedResponse) {
-          return cachedResponse;
+  event.respondWith(
+    fetch(event.request)
+      .then(response => {
+        // Clone and cache successful responses
+        if (response.status === 200) {
+          const responseClone = response.clone();
+          caches.open(CACHE_NAME).then(cache => {
+            cache.put(event.request, responseClone);
+          });
         }
-        
-        // Return offline page if both network and cache fail
-        if (event.request.destination === 'document') {
-          return caches.match('/index.html');
-        }
-        
-        return new Response('Offline - Resource not available', {
-          status: 503,
-          statusText: 'Service Unavailable',
-          headers: new Headers({
-            'Content-Type': 'text/plain'
-          })
+        return response;
+      })
+      .catch(() => {
+        // Fallback to cache if network fails
+        return caches.match(event.request).then(cachedResponse => {
+          if (cachedResponse) return cachedResponse;
+          
+          // Return offline page for main documents
+          if (event.request.destination === 'document') {
+            return caches.match('/index.html');
+          }
+          
+          return new Response('Offline', { status: 503 });
         });
-      });
-  })
-```
-
-);
+      })
+  );
 });
 
-// Handle messages from clients
-self.addEventListener(‘message’, event => {
-if (event.data && event.data.type === ‘SKIP_WAITING’) {
-self.skipWaiting();
-}
+// Handle messages
+self.addEventListener('message', event => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });
-
-console.log(‘Service Worker loaded successfully’);
