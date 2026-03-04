@@ -5,7 +5,7 @@ const STATIC_ASSETS = [
   '/manifest.json'
 ];
 
-// Install event - cache essentials
+// 1. Install event - التخزين الأولي للملفات الأساسية
 self.addEventListener('install', event => {
   console.log('🔧 Installing Service Worker...');
   event.waitUntil(
@@ -21,7 +21,7 @@ self.addEventListener('install', event => {
   );
 });
 
-// Activate event - clean old caches
+// 2. Activate event - تنظيف ذاكرة التخزين القديمة
 self.addEventListener('activate', event => {
   console.log('🚀 Activating Service Worker...');
   event.waitUntil(
@@ -35,12 +35,13 @@ self.addEventListener('activate', event => {
         })
       );
     }).then(() => {
+      console.log('✅ Activation complete');
       return self.clients.claim();
     })
   );
 });
 
-// Fetch event - Network first, fallback to cache
+// 3. Fetch event - استراتيجية: الشبكة أولاً مع التخزين الاحتياطي
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET' || event.request.url.includes('chrome-extension://')) {
     return;
@@ -49,8 +50,8 @@ self.addEventListener('fetch', event => {
   event.respondWith(
     fetch(event.request)
       .then(response => {
-        // Clone and cache successful responses
-        if (response.status === 200) {
+        // تحديث التخزين عند نجاح الاتصال بالشبكة
+        if (response.status === 200 && !event.request.url.includes('?')) {
           const responseClone = response.clone();
           caches.open(CACHE_NAME).then(cache => {
             cache.put(event.request, responseClone);
@@ -58,25 +59,31 @@ self.addEventListener('fetch', event => {
         }
         return response;
       })
-      .catch(() => {
-        // Fallback to cache if network fails
+      .catch(err => {
+        console.warn('Network request failed, checking cache:', err);
+        // عند فشل الشبكة، ابحث في التخزين
         return caches.match(event.request).then(cachedResponse => {
           if (cachedResponse) return cachedResponse;
           
-          // Return offline page for main documents
+          // إذا كان المستخدم يطلب صفحة ويب (Document) ولا يوجد إنترنت، وجهه لـ index.html
           if (event.request.destination === 'document') {
             return caches.match('/index.html');
           }
           
-          return new Response('Offline', { status: 503 });
+          return new Response('Offline - Resource not available', {
+            status: 503,
+            headers: { 'Content-Type': 'text/plain; charset=utf-8' }
+          });
         });
       })
   );
 });
 
-// Handle messages
+// 4. Handle messages - للتحكم اليدوي في التحديثات
 self.addEventListener('message', event => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
 });
+
+console.log('✅ Service Worker loaded');
