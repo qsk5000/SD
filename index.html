@@ -3,7 +3,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="description" content="منصة تعليمية متكاملة لتحقيق التفوق الدراسي - Mizan Academy IQ">
 <meta name="theme-color" content="#C5A059">
 <meta name="mobile-web-app-capable" content="yes">
@@ -15,7 +15,7 @@
 
 <link rel="icon" type="image/png" href="/icons/icon-192x192.png">
 <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
-<link rel="manifest" href="/manifest.json">
+<link rel="manifest" href="/manifest.json?v=1">
 
 <title>Mizan Academy IQ | ميزان أكاديمي</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
@@ -474,31 +474,6 @@ text-align:center;
 .footer-links a:hover { color:var(–gold); }
 
 /* ════════════════════════════════════════════
-PWA INSTALL BANNER
-════════════════════════════════════════════ */
-#installPrompt {
-position:fixed; bottom:20px; right:20px; z-index:700;
-background:var(–panel); border:1px solid var(–border);
-border-radius:var(–r-lg); padding:16px 20px;
-display:flex; align-items:center; gap:12px;
-box-shadow:var(–sh); animation:slideUp .3s ease;
-}
-#installPrompt.hidden { display:none; }
-@keyframes slideUp {
-from { transform:translateY(100px); opacity:0; }
-to { transform:translateY(0); opacity:1; }
-}
-.install-text { font-size:.85rem; color:var(–muted); flex:1; }
-.install-btn {
-padding:6px 14px; border-radius:8px;
-background:linear-gradient(135deg,var(–gold3),var(–gold));
-color:var(–ink); font-family:‘Cairo’,sans-serif;
-font-weight:800; font-size:.8rem; border:none; cursor:pointer;
-transition:all var(–tr);
-}
-.install-btn:hover { transform:translateY(-1px); }
-
-/* ════════════════════════════════════════════
 REVEAL ANIMATIONS
 ════════════════════════════════════════════ */
 .reveal {
@@ -520,20 +495,11 @@ RESPONSIVE
 @media(max-width:480px) {
 .hero-btns { flex-direction:column; align-items:center; }
 .cta-box { padding:36px 22px; }
-#installPrompt { bottom:15px; right:15px; flex-direction:column; width:calc(100% - 30px); }
 }
 </style>
 
 </head>
 <body>
-
-<!-- ══════════════ INSTALL PROMPT ══════════════ -->
-
-<div id="installPrompt" class="hidden">
-  <div class="install-text"><i class="fas fa-mobile-alt"></i> ثبّت التطبيق على هاتفك</div>
-  <button class="install-btn" onclick="installApp()">ثبّت الآن</button>
-  <button class="install-btn" style="background:transparent;color:var(--gold);margin-right:8px;" onclick="dismissInstall()">إغلاق</button>
-</div>
 
 <!-- ══════════════ POPUP ══════════════ -->
 
@@ -785,55 +751,39 @@ RESPONSIVE
 </footer>
 
 <script>
-/* ══════════════ PWA INSTALL PROMPT ══════════════ */
-let deferredPrompt;
-
-window.addEventListener('beforeinstallprompt', e => {
-  e.preventDefault();
-  deferredPrompt = e;
-  document.getElementById('installPrompt').classList.remove('hidden');
-});
-
-function installApp() {
-  if (deferredPrompt) {
-    deferredPrompt.prompt();
-    deferredPrompt.userChoice.then(choiceResult => {
-      if (choiceResult.outcome === 'accepted') {
-        console.log('User accepted the install prompt');
-      }
-      deferredPrompt = null;
-      dismissInstall();
-    });
-  }
-}
-
-function dismissInstall() {
-  document.getElementById('installPrompt').classList.add('hidden');
-}
-
-window.addEventListener('appinstalled', () => {
-  console.log('PWA installed successfully');
-  dismissInstall();
-});
-
 /* ══════════════ SERVICE WORKER REGISTRATION ══════════════ */
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js')
+    navigator.serviceWorker.register('/service-worker.js', {
+      scope: '/'
+    })
       .then(reg => {
-        console.log('Service Worker registered successfully:', reg);
+        console.log('✅ Service Worker registered:', reg);
         
         // Check for updates periodically
         setInterval(() => {
-          reg.update();
-        }, 60000); // Check every minute
+          reg.update().then(() => {
+            console.log('🔄 Service Worker checked for updates');
+          });
+        }, 30000);
       })
-      .catch(err => console.warn('Service Worker registration failed:', err));
+      .catch(err => {
+        console.error('❌ Service Worker registration failed:', err);
+      });
+
+    // Listen for controller change (SW update)
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      console.log('⚡ Service Worker updated and activated');
+    });
   });
 
-  // Listen for controller change (SW update)
-  navigator.serviceWorker.addEventListener('controllerchange', () => {
-    console.log('Service Worker updated');
+  // Handle offline/online status
+  window.addEventListener('offline', () => {
+    console.log('📵 Going offline');
+  });
+  
+  window.addEventListener('online', () => {
+    console.log('📶 Back online');
   });
 }
 
