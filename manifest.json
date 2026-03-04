@@ -1,0 +1,81 @@
+{
+“name”: “Mizan Academy IQ | ميزان أكاديمي”,
+“short_name”: “Mizan IQ”,
+“description”: “منصة تعليمية متكاملة لتحقيق التفوق الدراسي - Integrated educational platform for academic excellence”,
+“start_url”: “/”,
+“scope”: “/”,
+“display”: “standalone”,
+“orientation”: “portrait-primary”,
+“background_color”: “#09111E”,
+“theme_color”: “#C5A059”,
+“prefer_related_applications”: false,
+“categories”: [“education”, “productivity”],
+“icons”: [
+{
+“src”: “/icons/icon-192x192.png”,
+“sizes”: “192x192”,
+“type”: “image/png”,
+“purpose”: “any”
+},
+{
+“src”: “/icons/icon-512x512.png”,
+“sizes”: “512x512”,
+“type”: “image/png”,
+“purpose”: “any”
+},
+{
+“src”: “/icons/icon-maskable-192x192.png”,
+“sizes”: “192x192”,
+“type”: “image/png”,
+“purpose”: “maskable”
+},
+{
+“src”: “/icons/icon-maskable-512x512.png”,
+“sizes”: “512x512”,
+“type”: “image/png”,
+“purpose”: “maskable”
+}
+],
+“screenshots”: [
+{
+“src”: “/icons/screenshot-540x720.png”,
+“sizes”: “540x720”,
+“type”: “image/png”,
+“form_factor”: “narrow”
+},
+{
+“src”: “/icons/screenshot-1280x720.png”,
+“sizes”: “1280x720”,
+“type”: “image/png”,
+“form_factor”: “wide”
+}
+],
+“shortcuts”: [
+{
+“name”: “بوابة الطالب”,
+“short_name”: “البوابة”,
+“description”: “دخول سريع لبوابة ميزان الخاصة بالطلاب”,
+“url”: “https://www.mizaniq.online/ba”,
+“icons”: [
+{
+“src”: “/icons/icon-192x192.png”,
+“sizes”: “192x192”,
+“type”: “image/png”
+}
+]
+},
+{
+“name”: “الأسئلة والاختبارات”,
+“short_name”: “الأسئلة”,
+“description”: “اختبر نفسك مع مجموعة الأسئلة التفاعلية”,
+“url”: “https://www.mizaniq.online/qu”,
+“icons”: [
+{
+“src”: “/icons/icon-192x192.png”,
+“sizes”: “192x192”,
+“type”: “image/png”
+}
+]
+}
+]
+}
