@@ -527,7 +527,7 @@ RESPONSIVE
     <button class="nav-link" onclick="scrollTo('#features')">المميزات</button>
     <button class="nav-link" onclick="scrollTo('#sections')">الأقسام</button>
   </div>
-  <a href="https://t.me/Quizm1" target="_blank" class="nav-cta"><i class="fab fa-telegram"></i> تواصل معنا</a>
+  <a href="https://t.me/Quizm1" target="_self" class="nav-cta"><i class="fab fa-telegram"></i> تواصل معنا</a>
 </nav>
 
 <!-- ══════════════ HERO ══════════════ -->
@@ -686,32 +686,32 @@ RESPONSIVE
     <p class="sec-sub reveal">بوابات متخصصة تمنحك وصولاً سريعاً لكل خدمات ميزان.</p>
 
 <div class="links-grid">
-  <a class="link-card reveal" href="https://www.mizaniq.online/pr">
+  <a class="link-card reveal" href="https://www.mizaniq.online/pr" target="_self">
     <div class="link-icon"><i class="fas fa-magic"></i></div>
     <div class="link-label">المميزات</div>
     <div class="link-arrow"><i class="fas fa-arrow-left"></i></div>
   </a>
-  <a class="link-card reveal reveal-delay-1" href="https://www.mizaniq.online/su">
+  <a class="link-card reveal reveal-delay-1" href="https://www.mizaniq.online/su" target="_self">
     <div class="link-icon"><i class="fas fa-gem"></i></div>
     <div class="link-label">الباقات</div>
     <div class="link-arrow"><i class="fas fa-arrow-left"></i></div>
   </a>
-  <a class="link-card reveal reveal-delay-2" href="https://www.mizaniq.online/op">
+  <a class="link-card reveal reveal-delay-2" href="https://www.mizaniq.online/op" target="_self">
     <div class="link-icon"><i class="fas fa-comment-dots"></i></div>
     <div class="link-label">آراء الطلبة</div>
     <div class="link-arrow"><i class="fas fa-arrow-left"></i></div>
   </a>
-  <a class="link-card reveal reveal-delay-3" href="https://www.mizaniq.online/wh">
+  <a class="link-card reveal reveal-delay-3" href="https://www.mizaniq.online/wh" target="_self">
     <div class="link-icon"><i class="fas fa-dharmachakra"></i></div>
     <div class="link-label">دولاب الحظ</div>
     <div class="link-arrow"><i class="fas fa-arrow-left"></i></div>
   </a>
-  <a class="link-card reveal" href="https://www.mizaniq.online/ba">
+  <a class="link-card reveal" href="https://www.mizaniq.online/ba" target="_self">
     <div class="link-icon"><i class="fas fa-university"></i></div>
     <div class="link-label">بوابة ميزان</div>
     <div class="link-arrow"><i class="fas fa-arrow-left"></i></div>
   </a>
-  <a class="link-card reveal reveal-delay-1" href="https://www.mizaniq.online/qu">
+  <a class="link-card reveal reveal-delay-1" href="https://www.mizaniq.online/qu" target="_self">
     <div class="link-icon"><i class="fas fa-question-circle"></i></div>
     <div class="link-label">الأسئلة</div>
     <div class="link-arrow"><i class="fas fa-arrow-left"></i></div>
@@ -729,10 +729,10 @@ RESPONSIVE
       <div class="cta-icon"><i class="fas fa-rocket"></i></div>
       <div class="cta-title">هل أنت مستعد للتفوق؟</div>
       <p class="cta-sub">انضم إلى آلاف الطلبة المتميزين وابدأ رحلتك نحو النجاح الدراسي مع ميزان أكاديمي اليوم.</p>
-      <a href="https://t.me/Quizm1" target="_blank" class="cta-tg">
+      <a href="https://t.me/Quizm1" target="_self" class="cta-tg">
         <i class="fab fa-telegram"></i> تواصل معنا عبر تيليجرام
       </a>
-      <div class="cta-email"><i class="fas fa-envelope"></i> support@mizaniq.online</div>
+      <div class="cta-email"><i class="fas fa-envelope"></i> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="75060005051a070135181c0f141b1c045b1a1b191c1b10">[email&#160;protected]</a></div>
     </div>
   </div>
 </section>
@@ -743,106 +743,118 @@ RESPONSIVE
   <div class="footer-brand">MIZAN ACADEMY IQ</div>
   <div class="footer-copy">© 2026 Mizan Academy IQ — جميع الحقوق محفوظة</div>
   <div class="footer-links">
-    <a href="https://www.mizaniq.online/pr">المميزات</a>
-    <a href="https://www.mizaniq.online/su">الباقات</a>
-    <a href="https://www.mizaniq.online/ba">البوابة</a>
-    <a href="https://t.me/Quizm1" target="_blank">تواصل</a>
+    <a href="https://www.mizaniq.online/pr" target="_self">المميزات</a>
+    <a href="https://www.mizaniq.online/su" target="_self">الباقات</a>
+    <a href="https://www.mizaniq.online/ba" target="_self">البوابة</a>
+    <a href="https://t.me/Quizm1" target="_self">تواصل</a>
   </div>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+
+/* ══════════════ NAVIGATION HANDLER ══════════════ */
+// معالج الروابط الخارجية - بتفتح في نفس نافذة التطبيق
+document.addEventListener(‘click’, function(e) {
+// تأكد إنها رابط
+const link = e.target.closest(‘a’);
+if (!link) return;
+
+// إذا كانت الرابط لديها target=”_blank”، خليها كما هي
+if (link.target === ‘_blank’) return;
+
+// إذا كانت رابط خارجية وليست telegram
+const href = link.getAttribute(‘href’);
+if (href && (href.startsWith(‘http’) || href.startsWith(‘https’))) {
+// تأكد من أن target=”_self” موجود أو أضفه
+if (!link.target || link.target === ‘_self’) {
+// خليها تفتح في نفس التطبيق
+return;
+}
+}
+});
+
 /* ══════════════ SERVICE WORKER REGISTRATION ══════════════ */
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js', {
-      scope: '/'
-    })
-      .then(reg => {
-        console.log('✅ Service Worker registered:', reg);
-        
-        // Check for updates periodically
-        setInterval(() => {
-          reg.update().then(() => {
-            console.log('🔄 Service Worker checked for updates');
-          });
-        }, 30000);
-      })
-      .catch(err => {
-        console.error('❌ Service Worker registration failed:', err);
+if (‘serviceWorker’ in navigator) {
+window.addEventListener(‘load’, () => {
+navigator.serviceWorker.register(’/service-worker.js’, {
+scope: ‘/’
+})
+.then(reg => {
+console.log(‘✅ Service Worker registered:’, reg);
+
+```
+    // Check for updates periodically
+    setInterval(() => {
+      reg.update().then(() => {
+        console.log('🔄 Service Worker checked for updates');
       });
-
-    // Listen for controller change (SW update)
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-      console.log('⚡ Service Worker updated and activated');
-    });
+    }, 30000);
+  })
+  .catch(err => {
+    console.error('❌ Service Worker registration failed:', err);
   });
 
-  // Handle offline/online status
-  window.addEventListener('offline', () => {
-    console.log('📵 Going offline');
-  });
-  
-  window.addEventListener('online', () => {
-    console.log('📶 Back online');
-  });
+// Listen for controller change (SW update)
+navigator.serviceWorker.addEventListener('controllerchange', () => {
+  console.log('⚡ Service Worker updated and activated');
+});
+```
+
+});
+
+// Handle offline/online status
+window.addEventListener(‘offline’, () => {
+console.log(‘📵 Going offline’);
+});
+
+window.addEventListener(‘online’, () => {
+console.log(‘📶 Back online’);
+});
 }
 
 /* ── Popup ── */
 function closePopup(){
-  const p=document.getElementById('popup');
-  p.classList.add('hide');
-  setTimeout(()=>{ p.style.display='none'; },300);
-  try{ sessionStorage.setItem('mizanPopup2026','1'); }catch(e){}
+const p=document.getElementById(‘popup’);
+p.classList.add(‘hide’);
+setTimeout(()=>{ p.style.display=‘none’; },300);
+try{ sessionStorage.setItem(‘mizanPopup2026’,‘1’); }catch(e){}
 }
-window.addEventListener('load',()=>{
-  try{
-    if(!sessionStorage.getItem('mizanPopup2026'))
-      document.getElementById('popup').style.display='flex';
-  }catch(e){
-    document.getElementById('popup').style.display='flex';
-  }
+window.addEventListener(‘load’,()=>{
+try{
+if(!sessionStorage.getItem(‘mizanPopup2026’))
+document.getElementById(‘popup’).style.display=‘flex’;
+}catch(e){
+document.getElementById(‘popup’).style.display=‘flex’;
+}
 });
 
 /* ── Navbar scroll effect ── */
-window.addEventListener('scroll',()=>{
-  document.getElementById('topnav').classList.toggle('scrolled',window.scrollY>40);
+window.addEventListener(‘scroll’,()=>{
+document.getElementById(‘topnav’).classList.toggle(‘scrolled’,window.scrollY>40);
 },{passive:true});
 
 /* ── Smooth scroll helper ── */
 function scrollTo(sel){
-  const el=document.querySelector(sel);
-  if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+const el=document.querySelector(sel);
+if(el) el.scrollIntoView({behavior:‘smooth’,block:‘start’});
 }
 
 /* ── Reveal on scroll ── */
-document.addEventListener('DOMContentLoaded',()=>{
-  const revealEls=document.querySelectorAll('.reveal');
+document.addEventListener(‘DOMContentLoaded’,()=>{
+const revealEls=document.querySelectorAll(’.reveal’);
 
-  if(!('IntersectionObserver' in window)){
-    revealEls.forEach(el=>el.classList.add('visible'));
-    return;
-  }
+if(!(‘IntersectionObserver’ in window)){
+revealEls.forEach(el=>el.classList.add(‘visible’));
+return;
+}
 
-  revealEls.forEach(el=>el.classList.add('waiting'));
+revealEls.forEach(el=>el.classList.add(‘waiting’));
 
-  const io=new IntersectionObserver((entries)=>{
-    entries.forEach(e=>{
-      if(e.isIntersecting){
-        e.target.classList.add('visible');
-        io.unobserve(e.target);
-      }
-    });
-  },{threshold:0.08, rootMargin:'0px 0px -30px 0px'});
-
-  revealEls.forEach(el=>io.observe(el));
-
-  setTimeout(()=>{
-    document.querySelectorAll('.reveal.waiting:not(.visible)').forEach(el=>{
-      el.classList.add('visible');
-    });
-  },2500);
+const io=new IntersectionObserver((entries)=>{
+entries.forEach(e=>{
+if(e.isIntersecting){
+e.target.classList.add(‘visible’);
+io.unobserve(e.target);
+}
 });
-</script>
-
-</body>
-</html>
+},{threshold:0.08, rootMargin:’0px 0px -30px
