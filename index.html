@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="منصة تعليمية متكاملة لتحقيق التفوق الدراسي - Mizan Academy IQ">
+<meta name="theme-color" content="#C5A059">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Mizan IQ">
+
+<!-- Favicon -->
+
+<link rel="icon" type="image/png" href="/icons/icon-192x192.png">
+<link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+<link rel="manifest" href="/manifest.json">
+
+<title>Mizan Academy IQ | ميزان أكاديمي</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+/* ════════════════════════════════════════════
+   TOKENS
+════════════════════════════════════════════ */
+:root {
+  --ink:    #09111E;
+  --ink2:   #0D1A2D;
+  --ink3:   #132035;
+  --panel:  #111C2E;
+  --card:   #162338;
+  --border: rgba(197,160,89,.18);
+  --gold:   #C5A059;
+  --gold2:  #E2BF7A;
+  --gold3:  #8B6B35;
+  --goldBg: rgba(197,160,89,.08);
+  --text:   #E8EDF5;
+  --muted:  #7A8A9F;
+  --dim:    #4A5568;
+  --green:  #10B981;
+  --blue:   #3B82F6;
+  --r:      14px;
+  --r-lg:   22px;
+  --r-xl:   32px;
+  --sh:     0 4px 24px rgba(0,0,0,.4);
+  --sh-lg:  0 16px 50px rgba(0,0,0,.55);
+  --tr:     .22s cubic-bezier(.4,0,.2,1);
+}
+
+/* ════════════════════════════════════════════
+RESET
+════════════════════════════════════════════ */
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html {
+scroll-behavior:smooth;
+background:#09111E;           /* hard fallback — no var() */
+background-color:#09111E;
+}
+body {
+font-family:‘Cairo’,sans-serif;
+background:#09111E;           /* hard fallback */
+background-color:#09111E;
+background:var(–ink);
+color:#E8EDF5;                /* hard fallback */
+color:var(–text);
+overflow-x:hidden;
+-webkit-font-smoothing:antialiased;
+min-height:100vh;
+}
+::-webkit-scrollbar { width:5px; }
+::-webkit-scrollbar-track { background:var(–ink2); }
+::-webkit-scrollbar-thumb { background:var(–gold3); border-radius:4px; }
+a { text-decoration:none; color:inherit; }
+
+/* ════════════════════════════════════════════
+WELCOME POPUP
+════════════════════════════════════════════ */
+#popup {
+position:fixed; inset:0; z-index:9999;
+display:flex; align-items:center; justify-content:center; padding:20px;
+background:rgba(9,17,30,.88);
+backdrop-filter:blur(10px);
+transition:opacity var(–tr);
+}
+#popup.hide { opacity:0; pointer-events:none; }
+.popup-box {
+background:var(–panel);
+border:1px solid var(–border);
+border-radius:var(–r-xl);
+padding:42px 36px;
+max-width:420px; width:100%;
+text-align:center;
+position:relative;
+animation:popIn .5s cubic-bezier(.34,1.56,.64,1);
+box-shadow:var(–sh-lg);
+overflow:hidden;
+}
+.popup-box::before {
+content:’’;position:absolute;inset:0;
+background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(197,160,89,.07),transparent 70%);
+pointer-events:none;
+}
+@keyframes popIn {
+from { opacity:0; transform:translateY(30px) scale(.94); }
+to   { opacity:1; transform:none; }
+}
+.popup-moon {
+font-size:3.5rem;display:block;margin-bottom:16px;
+animation:moonFloat 3s ease-in-out infinite;
+filter:drop-shadow(0 0 18px rgba(197,160,89,.4));
+}
+@keyframes moonFloat {
+0%,100% { transform:translateY(0) rotate(-5deg); }
+50%      { transform:translateY(-10px) rotate(5deg); }
+}
+.popup-title { font-size:1.7rem; font-weight:900; color:var(–gold2); margin-bottom:10px; }
+.popup-msg   { color:var(–muted); font-size:.9rem; line-height:1.7; margin-bottom:24px; }
+.popup-stars { color:var(–gold); font-size:.75rem; letter-spacing:4px; margin-bottom:20px; opacity:.7; }
+.btn-popup {
+width:100%; padding:14px; border-radius:var(–r);
+background:linear-gradient(135deg,var(–gold3),var(–gold));
+color:var(–ink); font-family:‘Cairo’,sans-serif;
+font-weight:900; font-size:1rem; border:none; cursor:pointer;
+transition:all var(–tr); box-shadow:0 4px 18px rgba(197,160,89,.3);
+}
+.btn-popup:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(197,160,89,.4); }
+
+/* ════════════════════════════════════════════
+TOP NAV
+════════════════════════════════════════════ */
+.topnav {
+position:fixed; top:0; left:0; right:0; z-index:800;
+background:rgba(9,17,30,.85);
+backdrop-filter:blur(16px);
+border-bottom:1px solid var(–border);
+height:62px;
+display:flex; align-items:center; justify-content:space-between;
+padding:0 28px;
+transition:all var(–tr);
+}
+.topnav.scrolled { background:rgba(9,17,30,.97); }
+.nav-brand { display:flex; align-items:center; gap:11px; }
+.nav-mark {
+width:36px; height:36px;
+background:linear-gradient(135deg,var(–ink3),var(–card));
+border:1px solid var(–border); border-radius:10px;
+display:flex; align-items:center; justify-content:center;
+font-weight:900; font-size:.8rem; color:var(–gold);
+}
+.nav-name { font-weight:900; font-size:.95rem; color:var(–text); }
+.nav-links { display:flex; align-items:center; gap:4px; }
+@media(max-width:640px) { .nav-links { display:none; } }
+.nav-link {
+padding:7px 14px; border-radius:10px; font-size:.8rem; font-weight:700;
+color:var(–muted); border:none; background:transparent;
+cursor:pointer; transition:all var(–tr); font-family:‘Cairo’,sans-serif;
+}
+.nav-link:hover { color:var(–gold); background:var(–goldBg); }
+.nav-cta {
+padding:8px 20px; border-radius:14px;
+background:#8B6B35;
+background:linear-gradient(135deg,#8B6B35,#C5A059);
+color:#09111E !important; font-family:‘Cairo’,sans-serif;
+font-weight:900; font-size:.8rem; border:none; cursor:pointer;
+transition:all .22s ease; text-decoration:none;
+display:inline-flex; align-items:center; gap:6px;
+}
+.nav-cta:hover { transform:translateY(-1px); box-shadow:0 4px 16px rgba(197,160,89,.35); }
+
+/* ════════════════════════════════════════════
+HERO
+════════════════════════════════════════════ */
+.hero {
+min-height:100vh;
+display:flex; flex-direction:column;
+align-items:center; justify-content:center;
+text-align:center; padding:130px 24px 90px;
+position:relative; overflow:hidden;
+background:#09111E;
+}
+/* Layered backgrounds */
+.hero-bg {
+position:absolute; inset:0;
+background:
+radial-gradient(ellipse 65% 55% at 20% 40%,rgba(197,160,89,.06) 0%,transparent 65%),
+radial-gradient(ellipse 50% 60% at 80% 60%,rgba(20,60,120,.18) 0%,transparent 60%),
+radial-gradient(ellipse 80% 50% at 50% 100%,rgba(13,26,45,.5) 0%,transparent 60%);
+}
+.hero-grid {
+position:absolute; inset:0;
+background-image:
+linear-gradient(rgba(197,160,89,.03) 1px, transparent 1px),
+linear-gradient(90deg, rgba(197,160,89,.03) 1px, transparent 1px);
+background-size:55px 55px;
+}
+/* Floating orbs */
+.orb {
+position:absolute; border-radius:50%;
+filter:blur(80px); pointer-events:none; opacity:.25;
+animation:orbFloat 12s ease-in-out infinite;
+}
+.orb1 { width:400px; height:400px; background:#C5A059; top:-150px; right:-100px; animation-delay:0s; }
+.orb2 { width:300px; height:300px; background:#1B4FCC; bottom:-100px; left:-80px; animation-delay:-4s; }
+.orb3 { width:200px; height:200px; background:#C5A059; top:50%; left:60%; animation-delay:-8s; }
+@keyframes orbFloat {
+0%,100% { transform:translate(0,0); }
+33%     { transform:translate(30px,-20px); }
+66%     { transform:translate(-20px,30px); }
+}
+
+.hero-inner { position:relative; z-index:2; max-width:700px; }
+.hero-badge {
+display:inline-flex; align-items:center; gap:8px;
+background:var(–goldBg); border:1px solid rgba(197,160,89,.3);
+padding:6px 18px; border-radius:30px;
+color:var(–gold2); font-size:.78rem; font-weight:700;
+letter-spacing:2px; text-transform:uppercase;
+margin-bottom:28px;
+}
+.hero-badge span {
+width:6px; height:6px; border-radius:50%; background:var(–gold);
+animation:badgePulse 2s infinite;
+}
+@keyframes badgePulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.7)} }
+
+.hero-title {
+font-size:clamp(2rem,6vw,3.8rem);
+font-weight:900; line-height:1.15;
+margin-bottom:20px;
+}
+.hero-title .line1 { color:var(–text); display:block; }
+.hero-title .line2 {
+color:#E2BF7A;
+display:block;
+}
+@keyframes shimmer { 0%{background-position:200%} 100%{background-position:-200%} }
+.hero-sub { color:var(–muted); font-size:1.05rem; line-height:1.8; margin-bottom:40px; max-width:500px; margin-inline:auto; }
+
+.hero-btns { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+.hero-btn-primary {
+padding:15px 34px; border-radius:22px;
+background:#8B6B35;
+background:linear-gradient(135deg,#8B6B35,#C5A059);
+color:#09111E; font-family:‘Cairo’,sans-serif; font-weight:900;
+font-size:1rem; border:none; cursor:pointer;
+transition:all .22s ease; box-shadow:0 6px 24px rgba(197,160,89,.35);
+display:flex; align-items:center; gap:8px;
+text-decoration:none;
+}
+.hero-btn-primary:hover { transform:translateY(-3px); box-shadow:0 10px 32px rgba(197,160,89,.5); }
+.hero-btn-secondary {
+padding:15px 28px; border-radius:22px;
+background:rgba(197,160,89,.08);
+border:1.5px solid rgba(197,160,89,.5);
+color:#C5A059; font-family:‘Cairo’,sans-serif; font-weight:800;
+font-size:.95rem; cursor:pointer; transition:all .22s ease;
+display:flex; align-items:center; gap:8px;
+text-decoration:none;
+}
+.hero-btn-secondary:hover { background:rgba(197,160,89,.15); border-color:#C5A059; }
+
+/* Scroll indicator */
+.scroll-cue {
+position:absolute; bottom:36px; left:50%; transform:translateX(-50%);
+display:flex; flex-direction:column; align-items:center; gap:6px;
+color:var(–muted); font-size:.7rem; font-weight:600;
+animation:bounce 2.5s ease-in-out infinite;
+}
+.scroll-cue i { font-size:1.1rem; color:var(–gold); }
+@keyframes bounce {
+0%,100%{transform:translateX(-50%) translateY(0)}
+50%{transform:translateX(-50%) translateY(8px)}
+}
+
+/* ════════════════════════════════════════════
+STATS STRIP
+════════════════════════════════════════════ */
+.stats-strip {
+background:var(–panel);
+border-top:1px solid var(–border);
+border-bottom:1px solid var(–border);
+padding:28px 24px;
+}
+.stats-inner {
+max-width:900px; margin:0 auto;
+display:grid; grid-template-columns:repeat(4,1fr); gap:20px;
+}
+@media(max-width:600px) { .stats-inner { grid-template-columns:repeat(2,1fr); } }
+.stat-item { text-align:center; }
+.stat-val { font-size:2rem; font-weight:900; color:var(–gold); line-height:1; }
+.stat-lbl { font-size:.75rem; color:var(–muted); font-weight:600; margin-top:4px; }
+
+/* ════════════════════════════════════════════
+SECTIONS GENERAL
+════════════════════════════════════════════ */
+.section { padding:90px 24px; }
+.section-inner { max-width:1000px; margin:0 auto; }
+.sec-eyebrow {
+display:inline-flex; align-items:center; gap:8px;
+background:var(–goldBg); border:1px solid rgba(197,160,89,.25);
+padding:5px 16px; border-radius:30px;
+color:var(–gold); font-size:.75rem; font-weight:700;
+letter-spacing:1.5px; text-transform:uppercase; margin-bottom:16px;
+}
+.sec-title {
+font-size:clamp(1.5rem,3.5vw,2.2rem);
+font-weight:900; color:var(–text); margin-bottom:14px; line-height:1.2;
+}
+.sec-sub { color:var(–muted); font-size:.95rem; line-height:1.8; max-width:540px; }
+
+/* ════════════════════════════════════════════
+ABOUT SECTION
+════════════════════════════════════════════ */
+.about-grid { display:grid; grid-template-columns:1fr 1fr; gap:50px; align-items:center; margin-top:50px; }
+@media(max-width:768px) { .about-grid { grid-template-columns:1fr; gap:32px; } }
+.about-visual {
+background:var(–panel); border:1px solid var(–border);
+border-radius:var(–r-xl); padding:36px;
+position:relative; overflow:hidden;
+}
+.about-visual::before {
+content:’’; position:absolute; top:-30%; right:-20%;
+width:250px; height:250px; border-radius:50%;
+background:radial-gradient(circle,rgba(197,160,89,.08),transparent 70%);
+}
+.about-icon-big {
+width:90px; height:90px;
+background:linear-gradient(135deg,var(–gold3),var(–gold));
+border-radius:24px; display:flex; align-items:center; justify-content:center;
+font-size:2.2rem; color:var(–ink); margin-bottom:24px;
+box-shadow:0 8px 28px rgba(197,160,89,.3);
+}
+.about-text-title { font-size:1.3rem; font-weight:900; color:var(–text); margin-bottom:10px; }
+.about-text-body  { color:var(–muted); font-size:.9rem; line-height:1.8; }
+.about-points { display:flex; flex-direction:column; gap:14px; }
+.about-point {
+display:flex; align-items:flex-start; gap:14px;
+padding:16px; background:var(–panel); border:1px solid var(–border);
+border-radius:var(–r-lg); transition:all var(–tr);
+}
+.about-point:hover { border-color:rgba(197,160,89,.3); transform:translateX(-4px); }
+.ap-icon {
+width:40px; height:40px; border-radius:11px; flex-shrink:0;
+display:flex; align-items:center; justify-content:center; font-size:.95rem;
+}
+.ap-title { font-weight:800; color:var(–text); font-size:.9rem; margin-bottom:3px; }
+.ap-desc  { color:var(–muted); font-size:.8rem; line-height:1.6; }
+
+/* ════════════════════════════════════════════
+FEATURES SECTION
+════════════════════════════════════════════ */
+.feat-section { background:var(–panel); }
+.feat-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; margin-top:50px; }
+.feat-card {
+background:var(–card); border:1px solid var(–border);
+border-radius:var(–r-xl); padding:28px 22px;
+transition:all var(–tr); cursor:default;
+position:relative; overflow:hidden;
+}
+.feat-card::after {
+content:’’; position:absolute; bottom:0; left:0; right:0; height:2px;
+background:linear-gradient(90deg,transparent,var(–gold),transparent);
+transform:scaleX(0); transition:transform var(–tr);
+}
+.feat-card:hover { transform:translateY(-5px); border-color:rgba(197,160,89,.3); box-shadow:var(–sh); }
+.feat-card:hover::after { transform:scaleX(1); }
+.feat-icon {
+width:52px; height:52px; border-radius:15px;
+display:flex; align-items:center; justify-content:center;
+font-size:1.2rem; margin-bottom:16px;
+}
+.feat-title { font-weight:900; color:var(–text); margin-bottom:8px; font-size:.95rem; }
+.feat-desc  { color:var(–muted); font-size:.82rem; line-height:1.6; }
+
+/* ════════════════════════════════════════════
+NAV GRID (Sections)
+════════════════════════════════════════════ */
+.nav-section { padding:90px 24px; }
+.links-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; margin-top:50px; }
+.link-card {
+background:var(–panel); border:1px solid var(–border);
+border-radius:var(–r-xl); padding:28px 16px;
+text-align:center; transition:all var(–tr);
+display:flex; flex-direction:column; align-items:center; gap:12px;
+cursor:pointer; position:relative; overflow:hidden;
+}
+.link-card::before {
+content:’’; position:absolute; inset:0; border-radius:var(–r-xl);
+background:linear-gradient(135deg,rgba(197,160,89,.06),transparent);
+opacity:0; transition:opacity var(–tr);
+}
+.link-card:hover { transform:translateY(-5px); border-color:rgba(197,160,89,.35); box-shadow:var(–sh); }
+.link-card:hover::before { opacity:1; }
+.link-icon {
+width:56px; height:56px; border-radius:16px;
+background:var(–goldBg); border:1px solid rgba(197,160,89,.2);
+display:flex; align-items:center; justify-content:center;
+font-size:1.3rem; color:var(–gold); transition:all var(–tr);
+}
+.link-card:hover .link-icon { background:linear-gradient(135deg,var(–gold3),var(–gold)); color:var(–ink); }
+.link-label { font-weight:800; color:var(–text); font-size:.88rem; transition:color var(–tr); }
+.link-card:hover .link-label { color:var(–gold); }
+.link-arrow { color:var(–muted); font-size:.7rem; transition:all var(–tr); }
+.link-card:hover .link-arrow { color:var(–gold); transform:translateX(-4px); }
+
+/* ════════════════════════════════════════════
+CTA SECTION
+════════════════════════════════════════════ */
+.cta-section {
+padding:90px 24px;
+background:var(–panel);
+border-top:1px solid var(–border);
+}
+.cta-box {
+max-width:700px; margin:0 auto; text-align:center;
+background:var(–card); border:1px solid var(–border);
+border-radius:var(–r-xl); padding:56px 40px;
+position:relative; overflow:hidden;
+}
+.cta-box::before {
+content:’’; position:absolute; inset:0;
+background:
+radial-gradient(ellipse 70% 50% at 50% 0%,rgba(197,160,89,.07),transparent 65%),
+radial-gradient(ellipse 50% 40% at 50% 100%,rgba(20,60,120,.1),transparent 60%);
+}
+.cta-box::after {
+content:’’; position:absolute; inset:0;
+background-image:
+linear-gradient(rgba(197,160,89,.025) 1px,transparent 1px),
+linear-gradient(90deg,rgba(197,160,89,.025) 1px,transparent 1px);
+background-size:35px 35px;
+}
+.cta-inner { position:relative; z-index:1; }
+.cta-icon {
+width:72px; height:72px;
+background:linear-gradient(135deg,var(–gold3),var(–gold));
+border-radius:20px; margin:0 auto 24px;
+display:flex; align-items:center; justify-content:center;
+font-size:1.8rem; color:var(–ink);
+box-shadow:0 8px 28px rgba(197,160,89,.3);
+}
+.cta-title { font-size:1.8rem; font-weight:900; color:var(–text); margin-bottom:12px; }
+.cta-sub { color:var(–muted); font-size:.95rem; line-height:1.8; margin-bottom:32px; }
+.cta-tg {
+display:inline-flex; align-items:center; gap:10px;
+padding:16px 36px; border-radius:var(–r-lg);
+background:linear-gradient(135deg,#0088cc,#00aaee);
+color:#fff; font-family:‘Cairo’,sans-serif;
+font-weight:900; font-size:1rem; border:none; cursor:pointer;
+transition:all var(–tr); box-shadow:0 6px 24px rgba(0,136,204,.3);
+text-decoration:none;
+}
+.cta-tg:hover { transform:translateY(-3px); box-shadow:0 10px 32px rgba(0,136,204,.45); }
+.cta-email {
+display:flex; align-items:center; gap:8px; justify-content:center;
+margin-top:16px; color:var(–muted); font-size:.82rem; font-weight:600;
+}
+.cta-email i { color:var(–gold); }
+
+/* ════════════════════════════════════════════
+FOOTER
+════════════════════════════════════════════ */
+footer {
+background:var(–ink2);
+border-top:1px solid var(–border);
+padding:28px 24px;
+text-align:center;
+}
+.footer-brand { color:var(–gold); font-weight:900; font-size:1rem; margin-bottom:8px; }
+.footer-copy  { color:var(–muted); font-size:.78rem; font-weight:600; }
+.footer-links { display:flex; gap:16px; justify-content:center; margin-top:12px; }
+.footer-links a { color:var(–dim); font-size:.78rem; font-weight:600; transition:color var(–tr); }
+.footer-links a:hover { color:var(–gold); }
+
+/* ════════════════════════════════════════════
+PWA INSTALL BANNER
+════════════════════════════════════════════ */
+#installPrompt {
+position:fixed; bottom:20px; right:20px; z-index:700;
+background:var(–panel); border:1px solid var(–border);
+border-radius:var(–r-lg); padding:16px 20px;
+display:flex; align-items:center; gap:12px;
+box-shadow:var(–sh); animation:slideUp .3s ease;
+}
+#installPrompt.hidden { display:none; }
+@keyframes slideUp {
+from { transform:translateY(100px); opacity:0; }
+to { transform:translateY(0); opacity:1; }
+}
+.install-text { font-size:.85rem; color:var(–muted); flex:1; }
+.install-btn {
+padding:6px 14px; border-radius:8px;
+background:linear-gradient(135deg,var(–gold3),var(–gold));
+color:var(–ink); font-family:‘Cairo’,sans-serif;
+font-weight:800; font-size:.8rem; border:none; cursor:pointer;
+transition:all var(–tr);
+}
+.install-btn:hover { transform:translateY(-1px); }
+
+/* ════════════════════════════════════════════
+REVEAL ANIMATIONS
+════════════════════════════════════════════ */
+.reveal {
+opacity:1; transform:none; /* visible by default — JS will override */
+transition:opacity .6s ease, transform .6s ease;
+}
+.reveal.waiting {
+opacity:0; transform:translateY(24px);
+}
+.reveal.waiting.visible { opacity:1; transform:none; }
+.reveal-delay-1 { transition-delay:.1s; }
+.reveal-delay-2 { transition-delay:.2s; }
+.reveal-delay-3 { transition-delay:.3s; }
+.reveal-delay-4 { transition-delay:.4s; }
+
+/* ════════════════════════════════════════════
+RESPONSIVE
+════════════════════════════════════════════ */
+@media(max-width:480px) {
+.hero-btns { flex-direction:column; align-items:center; }
+.cta-box { padding:36px 22px; }
+#installPrompt { bottom:15px; right:15px; flex-direction:column; width:calc(100% - 30px); }
+}
+</style>
+
+</head>
+<body>
+
+<!-- ══════════════ INSTALL PROMPT ══════════════ -->
+
+<div id="installPrompt" class="hidden">
+  <div class="install-text"><i class="fas fa-mobile-alt"></i> ثبّت التطبيق على هاتفك</div>
+  <button class="install-btn" onclick="installApp()">ثبّت الآن</button>
+  <button class="install-btn" style="background:transparent;color:var(--gold);margin-right:8px;" onclick="dismissInstall()">إغلاق</button>
+</div>
+
+<!-- ══════════════ POPUP ══════════════ -->
+
+<div id="popup">
+  <div class="popup-box">
+    <span class="popup-moon">🌙</span>
+    <div class="popup-stars">✦ ✦ ✦ ✦ ✦</div>
+    <div class="popup-title">رمضان كريم</div>
+    <p class="popup-msg">عائلة ميزان أكاديمي تبارك لكم حلول شهر رمضان المبارك، ونتمنى لكم صياماً مقبولاً وتفوقاً علمياً متميزاً.</p>
+    <button class="btn-popup" onclick="closePopup()"><i class="fas fa-star"></i> أهلاً بك في ميزان</button>
+  </div>
+</div>
+
+<!-- ══════════════ TOP NAV ══════════════ -->
+
+<nav class="topnav" id="topnav">
+  <div class="nav-brand">
+    <div class="nav-mark">MI</div>
+    <div>
+      <div class="nav-name">Mizan Academy IQ</div>
+    </div>
+  </div>
+  <div class="nav-links">
+    <button class="nav-link" onclick="scrollTo('#about')">عن المنصة</button>
+    <button class="nav-link" onclick="scrollTo('#features')">المميزات</button>
+    <button class="nav-link" onclick="scrollTo('#sections')">الأقسام</button>
+  </div>
+  <a href="https://t.me/Quizm1" target="_blank" class="nav-cta"><i class="fab fa-telegram"></i> تواصل معنا</a>
+</nav>
+
+<!-- ══════════════ HERO ══════════════ -->
+
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+
+  <div class="hero-inner">
+    <div class="hero-badge"><span></span> MIZAN ACADEMY IQ</div>
+    <h1 class="hero-title">
+      <span class="line1">نبتكر لك</span>
+      <span class="line2">مستقبلاً أفضل</span>
+    </h1>
+    <p class="hero-sub">
+      منصة تعليمية متكاملة تجمع بين التخطيط الذكي والمتابعة الدقيقة،
+      لنرتقي بك نحو التفوق الدراسي الحقيقي.
+    </p>
+    <div class="hero-btns">
+      <button class="hero-btn-primary" onclick="scrollTo('#sections')">
+        <i class="fas fa-rocket"></i> اكتشف المنصة
+      </button>
+      <a href="https://www.mizaniq.online/ba" class="hero-btn-secondary">
+        <i class="fas fa-university"></i> بوابة الطالب
+      </a>
+    </div>
+  </div>
+
+  <div class="scroll-cue">
+    <span>اسحب للأسفل</span>
+    <i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<!-- ══════════════ STATS ══════════════ -->
+
+<div class="stats-strip">
+  <div class="stats-inner">
+    <div class="stat-item reveal">
+      <div class="stat-val" data-target="1000">100+</div>
+      <div class="stat-lbl">طالب مسجّل</div>
+    </div>
+    <div class="stat-item reveal reveal-delay-1">
+      <div class="stat-val">100%</div>
+      <div class="stat-lbl">رضا الطلبة</div>
+    </div>
+    <div class="stat-item reveal reveal-delay-2">
+      <div class="stat-val">6+</div>
+      <div class="stat-lbl">أقسام تعليمية</div>
+    </div>
+    <div class="stat-item reveal reveal-delay-3">
+      <div class="stat-val">24/7</div>
+      <div class="stat-lbl">متاحون دائماً</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ ABOUT ══════════════ -->
+
+<section class="section" id="about">
+  <div class="section-inner">
+    <div class="sec-eyebrow reveal"><i class="fas fa-info-circle"></i> عن المنصة</div>
+    <h2 class="sec-title reveal">التوازن هو مفتاح التفوق</h2>
+    <p class="sec-sub reveal">نحن في Mizan Academy IQ نؤمن أن النجاح ليس صدفة، بل نتيجة توازن دقيق بين التخطيط الذكي والجهد المنظم.</p>
+
+<div class="about-grid">
+  <div class="about-visual reveal">
+    <div class="about-icon-big"><i class="fas fa-graduation-cap"></i></div>
+    <div class="about-text-title">منصة متكاملة للطالب</div>
+    <div class="about-text-body">
+      نوفر بيئة تعليمية شاملة تتابع أداءك اليومي، تحلل مستواك الدراسي، وتمنحك أدوات التفوق في متناول يدك — كل ذلك في مكان واحد.
+    </div>
+  </div>
+
+  <div class="about-points">
+    <div class="about-point reveal reveal-delay-1">
+      <div class="ap-icon" style="background:rgba(197,160,89,.1);color:var(--gold);"><i class="fas fa-brain"></i></div>
+      <div>
+        <div class="ap-title">تحليل ذكي للمستوى</div>
+        <div class="ap-desc">نتابع أداءك الدراسي بدقة ونقدم تقارير مفصلة تساعدك على فهم نقاط القوة والضعف.</div>
+      </div>
+    </div>
+    <div class="about-point reveal reveal-delay-2">
+      <div class="ap-icon" style="background:rgba(59,130,246,.1);color:var(--blue);"><i class="fas fa-calendar-check"></i></div>
+      <div>
+        <div class="ap-title">جدول دراسي مخصص</div>
+        <div class="ap-desc">نبني لك جدولاً أسبوعياً مخصصاً يناسب وقتك وأهدافك الدراسية بشكل احترافي.</div>
+      </div>
+    </div>
+    <div class="about-point reveal reveal-delay-3">
+      <div class="ap-icon" style="background:rgba(16,185,129,.1);color:var(--green);"><i class="fas fa-trophy"></i></div>
+      <div>
+        <div class="ap-title">بيئة تحفيزية</div>
+        <div class="ap-desc">نحفزك للوصول إلى أهدافك عبر نظام متابعة مستمر يُشعرك بالإنجاز اليومي.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </div>
+</section>
+
+<!-- ══════════════ FEATURES ══════════════ -->
+
+<section class="section feat-section" id="features">
+  <div class="section-inner">
+    <div class="sec-eyebrow reveal"><i class="fas fa-rocket"></i> لماذا تختارنا؟</div>
+    <h2 class="sec-title reveal">مميزات تجعل الفرق</h2>
+    <p class="sec-sub reveal">كل ما تحتاجه لتحقيق التفوق الدراسي في منصة واحدة متكاملة.</p>
+
+<div class="feat-grid">
+  <div class="feat-card reveal">
+    <div class="feat-icon" style="background:rgba(197,160,89,.1);color:var(--gold);"><i class="fas fa-calendar-check"></i></div>
+    <div class="feat-title">تخطيط دراسي ذكي</div>
+    <div class="feat-desc">جداول أسبوعية مخصصة تتناسب مع احتياجاتك ومستواك الدراسي.</div>
+  </div>
+  <div class="feat-card reveal reveal-delay-1">
+    <div class="feat-icon" style="background:rgba(59,130,246,.1);color:var(--blue);"><i class="fas fa-chart-line"></i></div>
+    <div class="feat-title">تحليل دقيق للمستوى</div>
+    <div class="feat-desc">تقارير مفصلة ورسوم بيانية تُظهر تطورك الدراسي بوضوح.</div>
+  </div>
+  <div class="feat-card reveal reveal-delay-2">
+    <div class="feat-icon" style="background:rgba(16,185,129,.1);color:var(--green);"><i class="fas fa-user-clock"></i></div>
+    <div class="feat-title">متابعة الالتزام</div>
+    <div class="feat-desc">نظام حضور وتسجيل يومي يضمن استمراريتك وانتظامك في الدراسة.</div>
+  </div>
+  <div class="feat-card reveal reveal-delay-3">
+    <div class="feat-icon" style="background:rgba(197,160,89,.1);color:var(--gold);"><i class="fas fa-trophy"></i></div>
+    <div class="feat-title">بيئة تحفيزية</div>
+    <div class="feat-desc">مكافآت ونظام تحفيزي يجعل الدراسة تجربة ممتعة ومشوقة.</div>
+  </div>
+  <div class="feat-card reveal">
+    <div class="feat-icon" style="background:rgba(139,92,246,.1);color:#A78BFA;"><i class="fas fa-file-alt"></i></div>
+    <div class="feat-title">اختبارات يومية</div>
+    <div class="feat-desc">اختبارات تفاعلية يومية مع تصحيح فوري ونتائج تفصيلية.</div>
+  </div>
+  <div class="feat-card reveal reveal-delay-1">
+    <div class="feat-icon" style="background:rgba(239,68,68,.1);color:#FCA5A5;"><i class="fas fa-bolt"></i></div>
+    <div class="feat-title">دعم فوري</div>
+    <div class="feat-desc">فريق متخصص متاح لمساعدتك والإجابة على استفساراتك في أي وقت.</div>
+  </div>
+</div>
+
+  </div>
+</section>
+
+<!-- ══════════════ SECTIONS GRID ══════════════ -->
+
+<section class="nav-section" id="sections">
+  <div class="section-inner">
+    <div class="sec-eyebrow reveal"><i class="fas fa-th-large"></i> الأقسام</div>
+    <h2 class="sec-title reveal">استكشف كل ما نقدمه</h2>
+    <p class="sec-sub reveal">بوابات متخصصة تمنحك وصولاً سريعاً لكل خدمات ميزان.</p>
+
+<div class="links-grid">
+  <a class="link-card reveal" href="https://www.mizaniq.online/pr">
+    <div class="link-icon"><i class="fas fa-magic"></i></div>
+    <div class="link-label">المميزات</div>
+    <div class="link-arrow"><i class="fas fa-arrow-left"></i></div>
+  </a>
+  <a class="link-card reveal reveal-delay-1" href="https://www.mizaniq.online/su">
+    <div class="link-icon"><i class="fas fa-gem"></i></div>
+    <div class="link-label">الباقات</div>
+    <div class="link-arrow"><i class="fas fa-arrow-left"></i></div>
+  </a>
+  <a class="link-card reveal reveal-delay-2" href="https://www.mizaniq.online/op">
+    <div class="link-icon"><i class="fas fa-comment-dots"></i></div>
+    <div class="link-label">آراء الطلبة</div>
+    <div class="link-arrow"><i class="fas fa-arrow-left"></i></div>
+  </a>
+  <a class="link-card reveal reveal-delay-3" href="https://www.mizaniq.online/wh">
+    <div class="link-icon"><i class="fas fa-dharmachakra"></i></div>
+    <div class="link-label">دولاب الحظ</div>
+    <div class="link-arrow"><i class="fas fa-arrow-left"></i></div>
+  </a>
+  <a class="link-card reveal" href="https://www.mizaniq.online/ba">
+    <div class="link-icon"><i class="fas fa-university"></i></div>
+    <div class="link-label">بوابة ميزان</div>
+    <div class="link-arrow"><i class="fas fa-arrow-left"></i></div>
+  </a>
+  <a class="link-card reveal reveal-delay-1" href="https://www.mizaniq.online/qu">
+    <div class="link-icon"><i class="fas fa-question-circle"></i></div>
+    <div class="link-label">الأسئلة</div>
+    <div class="link-arrow"><i class="fas fa-arrow-left"></i></div>
+  </a>
+</div>
+
+  </div>
+</section>
+
+<!-- ══════════════ CTA ══════════════ -->
+
+<section class="cta-section">
+  <div class="cta-box reveal">
+    <div class="cta-inner">
+      <div class="cta-icon"><i class="fas fa-rocket"></i></div>
+      <div class="cta-title">هل أنت مستعد للتفوق؟</div>
+      <p class="cta-sub">انضم إلى آلاف الطلبة المتميزين وابدأ رحلتك نحو النجاح الدراسي مع ميزان أكاديمي اليوم.</p>
+      <a href="https://t.me/Quizm1" target="_blank" class="cta-tg">
+        <i class="fab fa-telegram"></i> تواصل معنا عبر تيليجرام
+      </a>
+      <div class="cta-email"><i class="fas fa-envelope"></i> support@mizaniq.online</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ FOOTER ══════════════ -->
+
+<footer>
+  <div class="footer-brand">MIZAN ACADEMY IQ</div>
+  <div class="footer-copy">© 2026 Mizan Academy IQ — جميع الحقوق محفوظة</div>
+  <div class="footer-links">
+    <a href="https://www.mizaniq.online/pr">المميزات</a>
+    <a href="https://www.mizaniq.online/su">الباقات</a>
+    <a href="https://www.mizaniq.online/ba">البوابة</a>
+    <a href="https://t.me/Quizm1" target="_blank">تواصل</a>
+  </div>
+</footer>
+
+<script>
+/* ══════════════ PWA INSTALL PROMPT ══════════════ */
+let deferredPrompt;
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('installPrompt').classList.remove('hidden');
+});
+
+function installApp() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(choiceResult => {
+      if (choiceResult.outcome === 'accepted') {
+        console.log('User accepted the install prompt');
+      }
+      deferredPrompt = null;
+      dismissInstall();
+    });
+  }
+}
+
+function dismissInstall() {
+  document.getElementById('installPrompt').classList.add('hidden');
+}
+
+window.addEventListener('appinstalled', () => {
+  console.log('PWA installed successfully');
+  dismissInstall();
+});
+
+/* ══════════════ SERVICE WORKER REGISTRATION ══════════════ */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(reg => {
+        console.log('Service Worker registered successfully:', reg);
+        
+        // Check for updates periodically
+        setInterval(() => {
+          reg.update();
+        }, 60000); // Check every minute
+      })
+      .catch(err => console.warn('Service Worker registration failed:', err));
+  });
+
+  // Listen for controller change (SW update)
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    console.log('Service Worker updated');
+  });
+}
+
+/* ── Popup ── */
+function closePopup(){
+  const p=document.getElementById('popup');
+  p.classList.add('hide');
+  setTimeout(()=>{ p.style.display='none'; },300);
+  try{ sessionStorage.setItem('mizanPopup2026','1'); }catch(e){}
+}
+window.addEventListener('load',()=>{
+  try{
+    if(!sessionStorage.getItem('mizanPopup2026'))
+      document.getElementById('popup').style.display='flex';
+  }catch(e){
+    document.getElementById('popup').style.display='flex';
+  }
+});
+
+/* ── Navbar scroll effect ── */
+window.addEventListener('scroll',()=>{
+  document.getElementById('topnav').classList.toggle('scrolled',window.scrollY>40);
+},{passive:true});
+
+/* ── Smooth scroll helper ── */
+function scrollTo(sel){
+  const el=document.querySelector(sel);
+  if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+/* ── Reveal on scroll ── */
+document.addEventListener('DOMContentLoaded',()=>{
+  const revealEls=document.querySelectorAll('.reveal');
+
+  if(!('IntersectionObserver' in window)){
+    revealEls.forEach(el=>el.classList.add('visible'));
+    return;
+  }
+
+  revealEls.forEach(el=>el.classList.add('waiting'));
+
+  const io=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        e.target.classList.add('visible');
+        io.unobserve(e.target);
+      }
+    });
+  },{threshold:0.08, rootMargin:'0px 0px -30px 0px'});
+
+  revealEls.forEach(el=>io.observe(el));
+
+  setTimeout(()=>{
+    document.querySelectorAll('.reveal.waiting:not(.visible)').forEach(el=>{
+      el.classList.add('visible');
+    });
+  },2500);
+});
+</script>
+
+</body>
+</html>
