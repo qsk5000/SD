@@ -5,14 +5,17 @@ const STATIC_ASSETS = [
   '/manifest.json'
 ];
 
-// 1. Install event - التخزين الأولي للملفات الأساسية
+// Install event - cache essentials
 self.addEventListener('install', event => {
   console.log('🔧 Installing Service Worker...');
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
         console.log('📦 Caching static assets');
-        return cache.addAll(STATIC_ASSETS);
+        return cache.addAll(STATIC_ASSETS)
+          .catch(err => {
+            console.warn('⚠️ Some assets failed to cache:', err);
+          });
       })
       .then(() => {
         console.log('✅ Installation complete');
@@ -21,65 +24,88 @@ self.addEventListener('install', event => {
   );
 });
 
-// 2. Activate event - تنظيف ذاكرة التخزين القديمة
+// Activate event - clean old caches
 self.addEventListener('activate', event => {
   console.log('🚀 Activating Service Worker...');
   event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheName !== CACHE_NAME) {
-            console.log('🗑️ Removing old cache:', cacheName);
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    }).then(() => {
-      console.log('✅ Activation complete');
-      return self.clients.claim();
-    })
+    caches.keys()
+      .then(cacheNames => {
+        return Promise.all(
+          cacheNames.map(cacheName => {
+            if (cacheName !== CACHE_NAME) {
+              console.log('🗑️ Removing old cache:', cacheName);
+              return caches.delete(cacheName);
+            }
+          })
+        );
+      })
+      .then(() => {
+        console.log('✅ Activation complete');
+        return self.clients.claim();
+      })
   );
 });
 
-// 3. Fetch event - استراتيجية: الشبكة أولاً مع التخزين الاحتياطي
+// Fetch event - Network first, fallback to cache
 self.addEventListener('fetch', event => {
-  if (event.request.method !== 'GET' || event.request.url.includes('chrome-extension://')) {
-    return;
-  }
+  // Skip non-GET requests
+  if (event.request.method !== 'GET') return;
+
+  // Skip chrome extensions
+  if (event.request.url.includes('chrome-extension://')) return;
+
+  const isExternalUrl = !event.request.url.includes(self.location.hostname);
 
   event.respondWith(
     fetch(event.request)
       .then(response => {
-        // تحديث التخزين عند نجاح الاتصال بالشبكة
-        if (response.status === 200 && !event.request.url.includes('?')) {
-          const responseClone = response.clone();
-          caches.open(CACHE_NAME).then(cache => {
-            cache.put(event.request, responseClone);
-          });
+        // Clone the response
+        const responseClone = response.clone();
+
+        // Cache successful responses (skip external and query strings)
+        if (response.status === 200 && !event.request.url.includes('?') && !isExternalUrl) {
+          caches.open(CACHE_NAME)
+            .then(cache => {
+              cache.put(event.request, responseClone);
+            })
+            .catch(err => console.warn('Cache update failed:', err));
         }
         return response;
       })
       .catch(err => {
         console.warn('Network request failed, checking cache:', err);
-        // عند فشل الشبكة، ابحث في التخزين
-        return caches.match(event.request).then(cachedResponse => {
-          if (cachedResponse) return cachedResponse;
-          
-          // إذا كان المستخدم يطلب صفحة ويب (Document) ولا يوجد إنترنت، وجهه لـ index.html
-          if (event.request.destination === 'document') {
-            return caches.match('/index.html');
-          }
-          
-          return new Response('Offline - Resource not available', {
+        
+        if (isExternalUrl) {
+          return new Response('External link requires internet connection', {
             status: 503,
-            headers: { 'Content-Type': 'text/plain; charset=utf-8' }
+            statusText: 'Service Unavailable',
+            headers: new Headers({ 'Content-Type': 'text/plain; charset=utf-8' })
           });
-        });
+        }
+        
+        return caches.match(event.request)
+          .then(cachedResponse => {
+            if (cachedResponse) {
+              console.log('📦 Serving from cache:', event.request.url);
+              return cachedResponse;
+            }
+            
+            // Return offline page if it's a page navigation
+            if (event.request.destination === 'document') {
+              return caches.match('/index.html');
+            }
+            
+            return new Response('Offline - Resource not available', {
+              status: 503,
+              statusText: 'Service Unavailable',
+              headers: new Headers({ 'Content-Type': 'text/plain; charset=utf-8' })
+            });
+          });
       })
   );
 });
 
-// 4. Handle messages - للتحكم اليدوي في التحديثات
+// Handle messages
 self.addEventListener('message', event => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
